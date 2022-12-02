@@ -1,7 +1,7 @@
 # Quick Start
 
     git clone https://github.com/trozdol/nginx-cors.git
-    cd ./cors-proxy
+    cd ./nginx-cors
 
 Make changes to `docker/nginx.conf` to specifiy target server and base uri.
 
