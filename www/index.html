@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+</head>
+<body>
+    <h1>It works</h1>
+
+    <h2>Serving Local Files</h2>
+    <p>
+        Either drop your code into <code>./www</code> or update the volum source in the <code>docker-compose.yml</code>
+        <code>- ../path/to/somewhere/else:/usr/share/nginx/html</code> to serve local files
+    </p>
+    
+    <h2>CORS Work Around</h2>
+    <p>
+        Update <code>./docker/nginx.conf</code> file and update the <code>location /uri/</code> 
+        and <code>proxy_pass</code> with the host you want to proxy to.
+    </p>
+
+    <form name="login">
+        <input type="text" name="username" placeholder="username" value="">
+        <input type="text" name="password" placeholder="password" value="">
+        
+        <input type="submit" value="Submit">
+
+        <pre><code>response will appear here...</code></pre>
+    </form>
+
+    <script type="module">
+        const form = document.querySelector('form');
+        
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const username = this.querySelector('[name=username]').value;
+            const password = this.querySelector('[name=password]').value;
+
+            login(username, password).then(res => {
+                console.log(res);
+                document.querySelector('pre code').innerText = JSON.stringify(res, null, 4);
+            }).catch(err => {
+                document.querySelector('pre code').innerText = JSON.stringify(err, null, 4);
+            }).finally(_ => {
+                console.log('done');
+            });
+        });
+
+        async function login(username, password) {
+
+            const resp = await fetch(`http://localhost/explorewriting/parse.do?action=checkLogin&userID=${username}&userPassword=${password}`, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
+                }
+            });
+            const json = await resp.json();
+    
+            console.log(json);
+            return json;
+        }
+    </script>
+</body>
+</html>
